@@ -21,12 +21,15 @@ void showNotification(v, flp) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Workmanager().initialize(callbackDispatcher, isInDebugMode: true); //to true if still in testing lev turn it to false whenever you are launching the app
+  await Workmanager().initialize(callbackDispatcher,
+      isInDebugMode:
+          true); //to true if still in testing lev turn it to false whenever you are launching the app
 
   await Workmanager().registerPeriodicTask("5", simplePeriodicTask,
       existingWorkPolicy: ExistingWorkPolicy.replace,
       frequency: Duration(minutes: 15), //when should it check the link
-      initialDelay: Duration(seconds: 5), //duration before showing the notification
+      initialDelay:
+          Duration(seconds: 5), //duration before showing the notification
       constraints: Constraints(
         networkType: NetworkType.connected,
       ));
@@ -42,17 +45,22 @@ void callbackDispatcher() {
     var initSetttings = InitializationSettings(android: android);
     flp.initialize(initSetttings);
 
-    // Uri uri = Uri.parse("https://testPushNotification.php");
-    // var response = await http.post(uri);
+    Uri uri = Uri.parse("https://app.srahmadi.ir/usersignin.php");
+    var response = await http.post(
+      uri,
+      body: {'username': '1016', 'password': '0057'},
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      encoding: Encoding.getByName('utf-8'),
+    );
     // print("here================");
-    // print(response);
-    // var convert = json.decode(response.body);
-    // if (convert['status'] == true) {
-    //   showNotification(convert['msg'], flp);
-    // } else {
-    //   print("no messgae");
-    // }
-    showNotification('A new Push Notification from Alireza', flp);
+    var convert = json.decode(response.body);
+    print(convert);
+    if (convert['id'] == '2') {
+      showNotification(convert['name'], flp);
+    } else {
+      print("no messgae");
+    }
+    // showNotification('A new Push Notification from Alireza', flp);
     return Future.value(true);
   });
 }
